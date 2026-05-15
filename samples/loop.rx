@@ -1,0 +1,6 @@
+total = 0
+do i = 1 to 5
+    total = total + i
+    say 'i=' i 'running total=' total
+end
+say 'Final total:' total

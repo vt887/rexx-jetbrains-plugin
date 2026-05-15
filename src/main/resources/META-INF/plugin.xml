@@ -1,0 +1,26 @@
+<idea-plugin>
+    <id>org.rexxlang.intellij</id>
+    <name>Rexx Language Support</name>
+    <vendor email="tymoshv@example.com">tymoshv</vendor>
+
+    <description><![CDATA[
+        Basic Rexx language support for IntelliJ Platform IDEs: file type registration,
+        lexer-backed tokenization, and syntax highlighting for comments, strings,
+        numbers, operators, and core control keywords.
+    ]]></description>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+            name="Rexx"
+            language="Rexx"
+            implementationClass="org.rexxlang.intellij.rexx.RexxFileType"
+            fieldName="INSTANCE"
+            extensions="rexx;rex;rx"/>
+        <lang.syntaxHighlighterFactory
+            language="Rexx"
+            implementationClass="org.rexxlang.intellij.rexx.RexxSyntaxHighlighterFactory"/>
+        <colorSettingsPage implementation="org.rexxlang.intellij.rexx.RexxColorSettingsPage"/>
+    </extensions>
+</idea-plugin>
