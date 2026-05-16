@@ -35,6 +35,9 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
+        with:
+          gradle-version: current
+          cache-provider: basic
 
       - name: Cache IntelliJ Platform SDK
         uses: actions/cache@v5.0.5
