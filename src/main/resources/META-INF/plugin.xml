@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>org.rexxlang.intellij</id>
+    <id>org.rexxlang.rexx</id>
     <name>Rexx Language Support</name>
     <vendor email="tymoshv@example.com">tymoshv</vendor>
 
