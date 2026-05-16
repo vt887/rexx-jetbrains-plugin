@@ -21,6 +21,16 @@
         <lang.syntaxHighlighterFactory
             language="Rexx"
             implementationClass="org.rexxlang.intellij.rexx.RexxSyntaxHighlighterFactory"/>
+        <completion.contributor
+            language="Rexx"
+            implementationClass="org.rexxlang.intellij.rexx.RexxCompletionContributor"/>
+        <configurationType implementation="org.rexxlang.intellij.rexx.run.RexxRunConfigurationType"/>
+        <lang.formatter
+            language="Rexx"
+            implementationClass="org.rexxlang.intellij.rexx.format.RexxFormattingModelBuilder"/>
+        <preFormatProcessor implementation="org.rexxlang.intellij.rexx.format.RexxPreFormatProcessor"/>
+        <codeStyleSettingsProvider implementation="org.rexxlang.intellij.rexx.format.RexxCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider implementation="org.rexxlang.intellij.rexx.format.RexxLanguageCodeStyleSettingsProvider"/>
         <colorSettingsPage implementation="org.rexxlang.intellij.rexx.RexxColorSettingsPage"/>
     </extensions>
 </idea-plugin>

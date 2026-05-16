@@ -31,7 +31,9 @@ intellijPlatform {
         }
         changeNotes = """
             <ul>
-                <li>Initial Rexx file type registration, lexer, and syntax highlighting.</li>
+                <li>Added Rexx keyword completion for core control-flow statements.</li>
+                <li>Added Rexx run configuration support for interpreter-based execution.</li>
+                <li>Added conservative formatter integration with a mandatory first-line comment rule.</li>
             </ul>
         """.trimIndent()
     }
