@@ -2,6 +2,7 @@
 .gradle/
 build/
 out/
+.intellijPlatform/
 *.iml
 .idea/
 .idea/workspace.xml
