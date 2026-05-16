@@ -30,7 +30,7 @@ internal fun ensureRexxFirstLineComment(text: String): String {
 
 // ---------------------------------------------------------------------------
 // Indentation reformatter
-// Per Rexx Style Guide: indent DO/SELECT blocks 1-3 spaces (default 3 for this plugin).
+// Per Rexx Style Guide: indent DO/SELECT blocks 4 spaces (default for this plugin).
 // https://erroneousbee.github.io/Computers/RexxStyleGuide.html
 // ---------------------------------------------------------------------------
 
@@ -223,17 +223,7 @@ private fun normalizeWhitespace(
     val spaces = " ".repeat(indentSize)
     val expandedTabs = line.replace("\t", spaces)
     val withoutTrailing = expandedTabs.trimEnd()
-    return normalizeCommentSpacing(withoutTrailing)
-}
-
-private fun normalizeCommentSpacing(line: String): String {
-    val commentStart = line.indexOf("/*")
-    if (commentStart < 0) return line
-
-    val prefix = line.substring(0, commentStart)
-    val comment = line.substring(commentStart)
-    val compactComment = comment.replace(Regex(" {2,}"), " ")
-    return prefix + compactComment
+    return withoutTrailing
 }
 
 // ---------------------------------------------------------------------------

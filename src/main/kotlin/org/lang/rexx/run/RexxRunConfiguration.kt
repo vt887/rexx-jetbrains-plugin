@@ -5,7 +5,6 @@ import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.configurations.RuntimeConfigurationError
-import com.intellij.execution.configurations.RuntimeConfigurationException
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.options.ConfigurationException
@@ -59,8 +58,8 @@ internal fun validateRexxRunConfiguration(
             throw RuntimeConfigurationError("Script path is not a valid file path.")
         }
 
-    if (!Files.exists(script)) {
-        throw RuntimeConfigurationError("Script file does not exist: $scriptPath")
+    if (!Files.isRegularFile(script) || !Files.isReadable(script)) {
+        throw RuntimeConfigurationError("Script file does not exist or is not readable: $scriptPath")
     }
 }
 

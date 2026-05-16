@@ -19,18 +19,18 @@ Rexx language plugin for IntelliJ IDEA, PyCharm, and other IntelliJ Platform IDE
 - Dedicated **Rexx** run configuration type under Run → Edit Configurations.
 - Configurable fields: interpreter path, script file, working directory, program arguments.
 - Supported interpreters: `rexx`, `regina`, `ooRexx` (any executable on PATH).
-- Validates interpreter and script existence before launch.
+- Validates interpreter path is non-blank and script file exists as a regular readable file before launch.
 - Executes `<interpreter> <script> [args]` via a secure local process.
 
 ### Code Formatter
 - Activates **Reformat Code** (`Ctrl+Alt+L`) for Rexx files.
 - Enforces the REXX first-line comment rule: if the file does not start with a block comment,
   inserts `/* The first line of a REXX exec must always be a comment. */` automatically.
-- Conservative formatting — never breaks strings or comments.
+- Conservative formatting — preserves string contents and comment text exactly; only adjusts indentation and blank lines.
 
 ## Limitations
 
-- No parser / PSI tree yet (lexer-only).
+- Minimal PSI scaffolding registered (`RexxParserDefinition`, `RexxFile`, `RexxPsiElement`); no semantic analysis yet.
 - No semantic analysis, navigation, or refactoring.
 - Structural indentation formatter requires Grammar-Kit/PSI migration (Phase 3).
 - Full Rexx dialect variation support is deferred.

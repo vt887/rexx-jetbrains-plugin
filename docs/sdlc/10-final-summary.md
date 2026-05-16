@@ -18,7 +18,7 @@ Phase 2 complete. Plugin is functional with syntax highlighting, keyword complet
 - **Keyword Completion** (`RexxCompletionContributor`): 28 keywords, excludes comments/strings.
 - **Run Configuration** (`run/` package): RexxRunConfigurationType, Factory, Configuration, CommandLineState.
   - Configurable interpreter, script path, working directory, arguments.
-  - Validates existence of interpreter and script before launch.
+  - Validates interpreter path is non-blank and script file exists as a regular readable file before launch.
 - **Code Formatter** (`format/` package):
   - `RexxFormattingModelBuilder`: activates Reformat Code menu item.
   - `RexxPreFormatProcessor`: enforces first-line comment rule.

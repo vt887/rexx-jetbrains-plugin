@@ -1,12 +1,12 @@
 <idea-plugin>
-    <id>org.lang.rexx</id>
+    <id>org.rexxlang.rexx</id>
     <name>Rexx Language Support</name>
     <vendor email="tymoshv@example.com">tymoshv</vendor>
 
     <description><![CDATA[
-        Basic Rexx language support for IntelliJ Platform IDEs: file type registration,
-        lexer-backed tokenization, and syntax highlighting for comments, strings,
-        numbers, operators, and core control keywords.
+        Rexx language support for IntelliJ Platform IDEs: file type registration,
+        lexer-backed tokenization, syntax highlighting, keyword completion,
+        run configuration (regina / rexx / ooRexx), and code formatter.
     ]]></description>
 
     <depends>com.intellij.modules.lang</depends>

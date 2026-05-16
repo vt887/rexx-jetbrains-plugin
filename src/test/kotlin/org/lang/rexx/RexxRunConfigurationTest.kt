@@ -3,7 +3,7 @@ package org.lang.rexx
 import com.intellij.execution.configurations.RuntimeConfigurationError
 import org.lang.rexx.run.buildRexxCommandLine
 import org.lang.rexx.run.validateRexxRunConfiguration
-import java.nio.file.Path
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -37,6 +37,11 @@ class RexxRunConfigurationTest {
 
     @Test
     fun acceptsExistingScriptPath() {
-        validateRexxRunConfiguration("rexx", Path.of("example.rexx").toAbsolutePath().toString())
+        val script = Files.createTempFile("rexx-test", ".rexx")
+        try {
+            validateRexxRunConfiguration("rexx", script.toString())
+        } finally {
+            Files.deleteIfExists(script)
+        }
     }
 }

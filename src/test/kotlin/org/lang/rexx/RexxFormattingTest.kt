@@ -150,9 +150,9 @@ class RexxFormattingTest {
     }
 
     @Test
-    fun normalizesTabsTrailingSpacesAndCommentSpaces() {
+    fun normalizesTabsAndTrailingSpaces() {
         val source = "do\t\n\tsay 'x'   \n/*  a   b  */\nend\t"
-        val expected = "do\n    say 'x'\n    /* a b */\nend"
+        val expected = "do\n    say 'x'\n    /*  a   b  */\nend"
         assertEquals(expected, reformatIndentation(source))
     }
 

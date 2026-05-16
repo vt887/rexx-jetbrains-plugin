@@ -49,12 +49,11 @@ jobs:
 
       - name: Install ktlint
         run: |
-          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint
-          chmod +x ktlint
-          sudo mv ktlint /usr/local/bin/
+          curl -sSLo ./ktlint https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint
+          chmod +x ./ktlint
 
       - name: Lint
-        run: make lint
+        run: make lint KTLINT=./ktlint
 
       - name: Build
         run: make build

@@ -1,28 +1,45 @@
 # Rexx Formatting Plan
 
 ## Current status
-The formatter is intentionally conservative because the plugin is still lexer-only and does not yet have a parser or PSI model.
 
-## Implemented rule
-Before formatting, the plugin ensures that the first non-empty line is a Rexx comment. If it is missing, the formatter inserts:
+The formatter combines a `PreFormatProcessor` (text-level pass before the IntelliJ formatter runs)
+with a minimal `FormattingModelBuilder` (structural placeholder). It has a minimal PSI scaffolding
+(`RexxParserDefinition`, `RexxFile`, `RexxPsiElement`) but no semantic parser yet.
 
-```text
-/* The first line of a REXX exec must always be a comment. */
-```
+## Implemented rules
+
+The following transformations are applied by `RexxPreFormatProcessor.reformatDocument`:
+
+| Rule | Description |
+|------|-------------|
+| 1.1 | Inserts `/* The first line of a REXX exec must always be a comment. */` if the first non-empty line is not a block comment |
+| 1.3 | Ensures a single trailing newline |
+| 2.1–2.2 | 4-space indentation inside `DO` / `END` blocks |
+| 2.3 | Each nesting level adds 4 spaces |
+| 2.4–2.5 | `IF … THEN` without `DO`: next printable line is indented one level; `ELSE` / `OTHERWISE` resets to block level |
+| 2.6 | `SELECT` / `WHEN` / `OTHERWISE` / `END` block indentation |
+| 3.3 | Trailing whitespace removed from every line |
+| 3.4 | Multiple consecutive blank lines collapsed to at most one |
+| 5.2 | Comment text content is never modified (only indentation is adjusted) |
+| 7.1 | Labels (single token ending with `:`) are placed at column 0; body is indented one level |
 
 ## Current limitations
-- no syntax-aware indentation
-- no block alignment for `DO` / `END`, `IF` / `THEN`, or `SELECT` / `WHEN`
-- no wrapping or spacing rules beyond the document-level guard
-- formatting quality depends on future PSI availability
+
+- No operator/comma spacing (Rules 3.1, 3.2) — deferred to Phase 3
+- No continuation-line alignment (Rule 2.7) — deferred to Phase 3
+- No keyword casing normalization (Rule 4.1) — deferred to Phase 3
+- No assignment alignment (Rule 11 future) — deferred to Phase 3
+- Indentation is heuristic (text-based), not PSI-aware; edge cases may arise with complex nesting
 
 ## Path to a full formatter
-1. add Grammar-Kit parser support
-2. introduce PSI element types for statements and expressions
-3. replace the flat formatting block with statement-aware blocks
-4. add configurable spacing, indentation, and wrapping policies
-5. expand tests with formatter fixtures
+
+1. Add Grammar-Kit / JFlex parser
+2. Introduce PSI element types for statements and expressions
+3. Replace the flat formatting block with statement-aware blocks
+4. Add configurable spacing, indentation, and wrapping policies
+5. Expand tests with formatter fixtures
 
 ## Style reference
-Formatting work should follow established Rexx style guidance:
+
+Formatting work follows established Rexx style guidance:
 https://rexxinfo.org/info/articles/best_coding_practices_for_rexx.html

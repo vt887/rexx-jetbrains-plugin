@@ -36,7 +36,7 @@ private class RexxFormattingBlock(
 
     override fun getWrap(): Wrap? = null
 
-    override fun getIndent(): Indent = Indent.getNormalIndent()
+    override fun getIndent(): Indent = Indent.getNoneIndent()
 
     override fun getAlignment(): Alignment = alignment
 
@@ -45,7 +45,7 @@ private class RexxFormattingBlock(
         child2: Block,
     ): Spacing? = null
 
-    override fun getChildAttributes(newChildIndex: Int): ChildAttributes = ChildAttributes(Indent.getNormalIndent(), alignment)
+    override fun getChildAttributes(newChildIndex: Int): ChildAttributes = ChildAttributes(Indent.getNoneIndent(), alignment)
 
     override fun isIncomplete(): Boolean = false
 
