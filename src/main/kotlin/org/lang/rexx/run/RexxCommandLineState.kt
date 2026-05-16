@@ -44,7 +44,11 @@ class RexxCommandLineState(
             return configuration.workingDirectory
         }
         return try {
-            Path.of(scriptPath).parent?.toString().orEmpty()
+            Path
+                .of(scriptPath)
+                .parent
+                ?.toString()
+                .orEmpty()
         } catch (_: Exception) {
             ""
         }
@@ -53,11 +57,13 @@ class RexxCommandLineState(
     @Throws(ExecutionException::class)
     override fun startProcess(): ProcessHandler {
         val scriptPath = resolveScriptPath()
-        return OSProcessHandler(buildRexxCommandLine(
-            interpreterPath = configuration.interpreterPath,
-            scriptPath = scriptPath,
-            workingDirectory = resolveWorkingDirectory(scriptPath),
-            programArguments = configuration.programArguments,
-        ))
+        return OSProcessHandler(
+            buildRexxCommandLine(
+                interpreterPath = configuration.interpreterPath,
+                scriptPath = scriptPath,
+                workingDirectory = resolveWorkingDirectory(scriptPath),
+                programArguments = configuration.programArguments,
+            ),
+        )
     }
 }

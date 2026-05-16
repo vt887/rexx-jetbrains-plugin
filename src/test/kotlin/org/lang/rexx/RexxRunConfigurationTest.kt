@@ -12,12 +12,13 @@ import kotlin.test.assertTrue
 class RexxRunConfigurationTest {
     @Test
     fun buildsCommandLineWithInterpreterScriptAndArguments() {
-        val commandLine = buildRexxCommandLine(
-            interpreterPath = "rexx",
-            scriptPath = "example.rexx",
-            workingDirectory = "samples",
-            programArguments = "--flag \"two words\"",
-        )
+        val commandLine =
+            buildRexxCommandLine(
+                interpreterPath = "rexx",
+                scriptPath = "example.rexx",
+                workingDirectory = "samples",
+                programArguments = "--flag \"two words\"",
+            )
 
         assertEquals("rexx", commandLine.exePath)
         assertEquals(listOf("example.rexx", "--flag", "two words"), commandLine.parametersList.parameters)
@@ -26,9 +27,10 @@ class RexxRunConfigurationTest {
 
     @Test
     fun requiresExistingScriptPath() {
-        val error = assertFailsWith<RuntimeConfigurationError> {
-            validateRexxRunConfiguration("rexx", "missing-script.rexx")
-        }
+        val error =
+            assertFailsWith<RuntimeConfigurationError> {
+                validateRexxRunConfiguration("rexx", "missing-script.rexx")
+            }
 
         assertTrue(error.message.orEmpty().contains("does not exist"))
     }

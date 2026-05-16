@@ -10,7 +10,10 @@ import org.lang.rexx.RexxLanguage
 
 class RexxCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
     @Suppress("OVERRIDE_DEPRECATION")
-    override fun createSettingsPage(settings: CodeStyleSettings, originalSettings: CodeStyleSettings): Configurable =
+    override fun createSettingsPage(
+        settings: CodeStyleSettings,
+        originalSettings: CodeStyleSettings,
+    ): Configurable =
         object : CodeStyleAbstractConfigurable(settings, originalSettings, "Rexx") {
             override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel =
                 object : TabbedLanguageCodeStylePanel(RexxLanguage, currentSettings, settings) {}

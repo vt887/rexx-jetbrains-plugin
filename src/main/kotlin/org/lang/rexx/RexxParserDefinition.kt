@@ -29,8 +29,10 @@ class RexxParserDefinition : ParserDefinition {
 
     override fun getWhitespaceTokens(): TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 
-    override fun spaceExistenceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements =
-        ParserDefinition.SpaceRequirements.MAY
+    override fun spaceExistenceTypeBetweenTokens(
+        left: ASTNode,
+        right: ASTNode,
+    ): ParserDefinition.SpaceRequirements = ParserDefinition.SpaceRequirements.MAY
 
     private companion object {
         private val FILE = IFileElementType(RexxLanguage)

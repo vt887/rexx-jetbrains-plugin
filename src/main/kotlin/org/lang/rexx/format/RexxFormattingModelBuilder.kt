@@ -25,7 +25,9 @@ class RexxFormattingModelBuilder : FormattingModelBuilder {
     }
 }
 
-private class RexxFormattingBlock(private val node: ASTNode) : Block {
+private class RexxFormattingBlock(
+    private val node: ASTNode,
+) : Block {
     private val alignment = Alignment.createAlignment()
 
     override fun getTextRange() = node.textRange
@@ -38,10 +40,12 @@ private class RexxFormattingBlock(private val node: ASTNode) : Block {
 
     override fun getAlignment(): Alignment = alignment
 
-    override fun getSpacing(child1: Block?, child2: Block): Spacing? = null
+    override fun getSpacing(
+        child1: Block?,
+        child2: Block,
+    ): Spacing? = null
 
-    override fun getChildAttributes(newChildIndex: Int): ChildAttributes =
-        ChildAttributes(Indent.getNormalIndent(), alignment)
+    override fun getChildAttributes(newChildIndex: Int): ChildAttributes = ChildAttributes(Indent.getNormalIndent(), alignment)
 
     override fun isIncomplete(): Boolean = false
 

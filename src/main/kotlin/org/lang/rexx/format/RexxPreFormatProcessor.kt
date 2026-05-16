@@ -1,7 +1,7 @@
 package org.lang.rexx.format
 
-import com.intellij.lang.ASTNode
 import com.intellij.application.options.CodeStyle
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.source.codeStyle.PreFormatProcessor
@@ -14,7 +14,8 @@ internal const val REXX_FIRST_LINE_COMMENT = "/* The first line of a REXX exec m
 // ---------------------------------------------------------------------------
 
 internal fun needsRexxFirstLineComment(text: String): Boolean =
-    text.lineSequence()
+    text
+        .lineSequence()
         .firstOrNull { it.isNotBlank() }
         ?.trimStart()
         ?.startsWith("/*")
@@ -33,51 +34,79 @@ internal fun ensureRexxFirstLineComment(text: String): String {
 // https://erroneousbee.github.io/Computers/RexxStyleGuide.html
 // ---------------------------------------------------------------------------
 
-internal fun reformatIndentation(text: String, indentSize: Int = 3): String {
+internal fun reformatIndentation(
+    text: String,
+    indentSize: Int = 4,
+): String {
     val unit = " ".repeat(indentSize)
     val lines = text.lines()
     val out = mutableListOf<String>()
     var level = 0
+    var extraOneShot = 0 // temporary extra indent for next printable line only
     var inBlockComment = false
 
     for (raw in lines) {
         val normalizedLine = normalizeWhitespace(raw, indentSize)
         val trimmed = normalizedLine.trim()
 
+        // Rule 3.4: collapse consecutive blank lines to at most one
         if (trimmed.isEmpty()) {
-            out.add("")
+            if (out.lastOrNull() != "") out.add("")
             continue
         }
 
-        // Inside a multi-line block comment: preserve content, keep indent, watch for close
+        // Inside a multi-line block comment: keep indent, watch for closing */
         if (inBlockComment) {
-            out.add(unit.repeat(level) + trimmed)
+            out.add(unit.repeat(level + extraOneShot) + trimmed)
             if (trimmed.contains("*/")) inBlockComment = false
             continue
         }
 
-        // Line that opens a block comment
+        // Single-line or opening block comment: indent at current level but don't consume extraOneShot
         if (trimmed.startsWith("/*")) {
-            out.add(unit.repeat(level) + trimmed)
+            out.add(unit.repeat(level + extraOneShot) + trimmed)
             if (!trimmed.contains("*/")) inBlockComment = true
             continue
         }
 
         val firstKw = firstEffectiveKeyword(trimmed)
+        val isLabel = isLabelLine(trimmed)
 
-        // Decrease indent BEFORE printing these keywords
-        when (firstKw) {
-            "END" -> if (level > 0) level--
-        }
+        // Decrease indent before END (Rule 2.2)
+        if (firstKw == "END" && level > 0) level--
 
-        out.add(unit.repeat(level) + trimmed)
+        // Rule 7.1: labels always at column 0; other lines use level + one-shot
+        val effectiveLevel = if (isLabel) 0 else (level + extraOneShot)
+        extraOneShot = 0
 
-        // Increase indent AFTER printing these keywords
+        out.add(unit.repeat(effectiveLevel) + trimmed)
+
+        // Update indent state after printing
         when {
+            // Rule 7.1 / 8.1: label opens a procedure body
+            isLabel -> level = 1
+
+            // Standalone DO or DO <expr> (Rule 2.2 / 2.3)
             firstKw == "DO" -> level++
+
+            // SELECT block (Rule 2.6)
             firstKw == "SELECT" -> level++
-            // handles "IF cond THEN DO" or "ELSE DO" at end of line
+
+            // Trailing DO on any line: IF/THEN DO, ELSE DO, WHEN/THEN DO (Rules 2.4–2.6)
             lineEndsWithDo(trimmed) -> level++
+
+            // Trailing THEN without DO: body is the next single statement (Rules 2.4 / 2.6)
+            lineEndsWithThen(trimmed) -> extraOneShot = 1
+
+            // OTHERWISE with no inline body: body is the next single statement (Rule 2.6)
+            firstKw == "OTHERWISE" && noInlineBody(trimmed, "OTHERWISE") -> extraOneShot = 1
+
+            // ELSE alone: body is the next single statement (Rule 2.5)
+            firstKw == "ELSE" && !lineEndsWithDo(trimmed) && !lineEndsWithThen(trimmed) &&
+                noInlineBody(trimmed, "ELSE") -> extraOneShot = 1
+
+            // RETURN / EXIT close the label-opened procedure block (Rule 8.1)
+            (firstKw == "RETURN" || firstKw == "EXIT") && level > 0 -> level--
         }
     }
 
@@ -106,11 +135,39 @@ private fun lineEndsWithDo(line: String): Boolean {
     return noComment.split(Regex("\\s+")).lastOrNull()?.uppercase() == "DO"
 }
 
+/** True when the last meaningful token on the line is THEN (and not DO). */
+private fun lineEndsWithThen(line: String): Boolean {
+    val noComment = line.substringBefore("/*").trim()
+    return noComment.split(Regex("\\s+")).lastOrNull()?.uppercase() == "THEN"
+}
+
+/** True when there is no body content after [keyword] on the line (ignores inline comments). */
+private fun noInlineBody(
+    line: String,
+    keyword: String,
+): Boolean {
+    val noComment = line.substringBefore("/*").trim()
+    return noComment
+        .uppercase()
+        .substringAfter(keyword)
+        .trim()
+        .isEmpty()
+}
+
+/** True when the line is a pure label: one identifier ending with ':', no spaces. */
+private fun isLabelLine(line: String): Boolean {
+    val t = line.trim()
+    return t.endsWith(":") && !t.startsWith("/*") && !t.any { it.isWhitespace() } && t.length > 1
+}
+
 // ---------------------------------------------------------------------------
 // Full document reformat: first-line comment + indentation
 // ---------------------------------------------------------------------------
 
-internal fun reformatDocument(text: String, indentSize: Int = 3): String =
+internal fun reformatDocument(
+    text: String,
+    indentSize: Int = 4,
+): String =
     normalizeFileEnding(
         reformatIndentation(
             mergeEmptyLineBetweenSingleLineBlockComments(ensureRexxFirstLineComment(text)),
@@ -151,15 +208,18 @@ private fun mergeEmptyLineBetweenSingleLineBlockComments(text: String): String {
     return out.joinToString("\n")
 }
 
-private fun String.isSingleLineBlockComment(): Boolean =
-    startsWith("/*") && endsWith("*/")
+private fun String.isSingleLineBlockComment(): Boolean = startsWith("/*") && endsWith("*/")
 
+/** Rule 1.3: every file ends with exactly one trailing newline. */
 private fun normalizeFileEnding(text: String): String {
-    val withoutTrailingBlankLines = text.replace(Regex("(?:\\R[\\t ]*)+\\z"), "")
-    return withoutTrailingBlankLines + "\n\n"
+    val withoutTrailingBlanks = text.replace(Regex("(?:\\R[\\t ]*)+\\z"), "")
+    return withoutTrailingBlanks + "\n"
 }
 
-private fun normalizeWhitespace(line: String, indentSize: Int): String {
+private fun normalizeWhitespace(
+    line: String,
+    indentSize: Int,
+): String {
     val spaces = " ".repeat(indentSize)
     val expandedTabs = line.replace("\t", spaces)
     val withoutTrailing = expandedTabs.trimEnd()
@@ -181,11 +241,16 @@ private fun normalizeCommentSpacing(line: String): String {
 // ---------------------------------------------------------------------------
 
 class RexxPreFormatProcessor : PreFormatProcessor {
-    override fun process(element: ASTNode, range: TextRange): TextRange {
+    override fun process(
+        element: ASTNode,
+        range: TextRange,
+    ): TextRange {
         val file = element.psi.containingFile ?: return range
         if (!file.language.isKindOf(RexxLanguage) &&
             !file.viewProvider.baseLanguage.isKindOf(RexxLanguage)
-        ) return range
+        ) {
+            return range
+        }
 
         val documentManager = PsiDocumentManager.getInstance(file.project)
         val document = documentManager.getDocument(file) ?: return range
@@ -193,8 +258,8 @@ class RexxPreFormatProcessor : PreFormatProcessor {
         val original = document.text
         val settings = CodeStyle.getSettings(file)
         val indentOptions = settings.getIndentOptions(file.fileType)
-        val configuredIndent = indentOptions?.INDENT_SIZE ?: 3
-        val indentSize = configuredIndent.coerceIn(1, 3)
+        val configuredIndent = indentOptions?.INDENT_SIZE ?: 4
+        val indentSize = configuredIndent.coerceAtLeast(1)
         val reformatted = reformatDocument(original, indentSize)
         if (reformatted == original) return range
 

@@ -12,7 +12,10 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import org.lang.rexx.RexxLanguage
 
 class RexxLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
-    override fun createConfigurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable =
+    override fun createConfigurable(
+        settings: CodeStyleSettings,
+        modelSettings: CodeStyleSettings,
+    ): CodeStyleConfigurable =
         object : CodeStyleAbstractConfigurable(settings, modelSettings, "Rexx") {
             override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel =
                 object : TabbedLanguageCodeStylePanel(RexxLanguage, currentSettings, settings) {}
@@ -27,7 +30,8 @@ class RexxLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider(
         }
     }
 
-    override fun getCodeSample(settingsType: SettingsType): String = """
+    override fun getCodeSample(settingsType: SettingsType): String =
+        """
         /* Rexx formatting sample */
         parse arg inputValue
 
@@ -55,7 +59,7 @@ class RexxLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider(
 
         say 'Total:' total
         exit 0
-    """.trimIndent()
+        """.trimIndent()
 
     override fun getLanguage(): Language = RexxLanguage
 

@@ -4,7 +4,9 @@ import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.psi.FileViewProvider
 import javax.swing.Icon
 
-class RexxFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, RexxLanguage) {
+class RexxFile(
+    viewProvider: FileViewProvider,
+) : PsiFileBase(viewProvider, RexxLanguage) {
     override fun getFileType() = RexxFileType.INSTANCE
 
     override fun toString(): String = "Rexx File"

@@ -1,6 +1,7 @@
-.PHONY: help build clean test run runIde verify package check deps versions
+.PHONY: help build clean test run runIde verify package check deps versions lint format
 
 GRADLEW := ./gradlew
+KTLINT  := ktlint
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -29,6 +30,12 @@ package: ## Build distributable plugin ZIP
 check: ## Run build + tests in one step
 	$(GRADLEW) clean build test --no-daemon
 
+lint: ## Check Kotlin code style with ktlint
+	$(KTLINT) "src/**/*.kt"
+
+format: ## Auto-fix Kotlin code style violations with ktlint
+	$(KTLINT) --format "src/**/*.kt"
+
 deps: ## Print resolved dependency tree
 	$(GRADLEW) dependencies --configuration runtimeClasspath --no-daemon
 
@@ -36,5 +43,6 @@ versions: ## Show versions of all relevant tools
 	@echo "=== Java ===";        java -version 2>&1 || echo "not found"
 	@echo "=== Kotlin ===";      kotlinc -version 2>&1 || echo "not found"
 	@echo "=== Gradle ===";      $(GRADLEW) --version 2>&1 | grep -E "^(Gradle|Kotlin|Groovy|Ant|JVM|OS)" || echo "not found"
+	@echo "=== ktlint ===";     ktlint --version 2>&1 || echo "not found"
 	@echo "=== Rexx ===";        rexx -v 2>&1 || regina --version 2>&1 || echo "not found"
 	@echo "=== Git ===";         git --version 2>&1 || echo "not found"

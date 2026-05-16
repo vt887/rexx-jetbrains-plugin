@@ -8,8 +8,7 @@ import com.intellij.psi.PsiElement
 
 private val COMMENT_TAG_PATTERN = Regex("(?i)\\b(TODO|FIXME|NOTE)\\b")
 
-internal fun findCommentTagRanges(text: String): List<IntRange> =
-    COMMENT_TAG_PATTERN.findAll(text).map { it.range }.toList()
+internal fun findCommentTagRanges(text: String): List<IntRange> = COMMENT_TAG_PATTERN.findAll(text).map { it.range }.toList()
 
 internal fun findCommentDelimiterRanges(text: String): List<IntRange> {
     if (!text.startsWith("/*")) return emptyList()
@@ -21,7 +20,10 @@ internal fun findCommentDelimiterRanges(text: String): List<IntRange> {
 }
 
 class RexxCommentTagAnnotator : Annotator {
-    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    override fun annotate(
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ) {
         if (element.node.elementType != RexxTokenTypes.COMMENT) {
             return
         }

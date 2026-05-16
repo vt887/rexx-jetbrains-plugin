@@ -72,6 +72,5 @@ class RexxSyntaxHighlighterTest : BasePlatformTestCase() {
         assertEquals(RexxTextAttributes.BAD_CHARACTER, keyFor(TokenType.BAD_CHARACTER))
     }
 
-    private fun keyFor(tokenType: com.intellij.psi.tree.IElementType) =
-        highlighter.getTokenHighlights(tokenType).single()
+    private fun keyFor(tokenType: com.intellij.psi.tree.IElementType) = highlighter.getTokenHighlights(tokenType).single()
 }

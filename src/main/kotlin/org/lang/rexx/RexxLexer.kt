@@ -12,7 +12,12 @@ open class RexxLexer : LexerBase() {
     private var tokenEnd = 0
     private var tokenType: IElementType? = null
 
-    override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
+    override fun start(
+        buffer: CharSequence,
+        startOffset: Int,
+        endOffset: Int,
+        initialState: Int,
+    ) {
         this.buffer = buffer
         this.startOffset = startOffset
         this.endOffset = endOffset
@@ -46,54 +51,62 @@ open class RexxLexer : LexerBase() {
         }
 
         val current = buffer[tokenStart]
-        tokenType = when {
-            current.isWhitespace() -> {
-                tokenEnd = scanWhile(tokenStart, Char::isWhitespace)
-                TokenType.WHITE_SPACE
-            }
-            current == '/' && charAt(tokenStart + 1) == '*' -> {
-                tokenEnd = scanComment(tokenStart)
-                RexxTokenTypes.COMMENT
-            }
-            current == '\'' || current == '"' -> {
-                tokenEnd = scanString(tokenStart, current)
-                RexxTokenTypes.STRING
-            }
-            current.isDigit() || (current == '.' && charAt(tokenStart + 1)?.isDigit() == true) -> {
-                tokenEnd = scanNumber(tokenStart)
-                RexxTokenTypes.NUMBER
-            }
-            isSymbolStart(current) -> {
-                tokenEnd = scanWhile(tokenStart, ::isSymbolPart)
-                val symbol = buffer.subSequence(tokenStart, tokenEnd).toString()
-                if (isKeyword(symbol)) {
-                    RexxTokenTypes.KEYWORD
-                } else if (charAt(tokenEnd) == ':') {
-                    tokenEnd += 1
-                    RexxTokenTypes.LABEL
-                } else if (isBuiltinFunction(symbol)) {
-                    RexxTokenTypes.BUILTIN_FUNCTION
-                } else if (nextNonWhitespaceChar(tokenEnd) == '(') {
-                    RexxTokenTypes.FUNCTION_CALL
-                } else {
-                    RexxTokenTypes.IDENTIFIER
+        tokenType =
+            when {
+                current.isWhitespace() -> {
+                    tokenEnd = scanWhile(tokenStart, Char::isWhitespace)
+                    TokenType.WHITE_SPACE
+                }
+
+                current == '/' && charAt(tokenStart + 1) == '*' -> {
+                    tokenEnd = scanComment(tokenStart)
+                    RexxTokenTypes.COMMENT
+                }
+
+                current == '\'' || current == '"' -> {
+                    tokenEnd = scanString(tokenStart, current)
+                    RexxTokenTypes.STRING
+                }
+
+                current.isDigit() || (current == '.' && charAt(tokenStart + 1)?.isDigit() == true) -> {
+                    tokenEnd = scanNumber(tokenStart)
+                    RexxTokenTypes.NUMBER
+                }
+
+                isSymbolStart(current) -> {
+                    tokenEnd = scanWhile(tokenStart, ::isSymbolPart)
+                    val symbol = buffer.subSequence(tokenStart, tokenEnd).toString()
+                    if (isKeyword(symbol)) {
+                        RexxTokenTypes.KEYWORD
+                    } else if (charAt(tokenEnd) == ':') {
+                        tokenEnd += 1
+                        RexxTokenTypes.LABEL
+                    } else if (isBuiltinFunction(symbol)) {
+                        RexxTokenTypes.BUILTIN_FUNCTION
+                    } else if (nextNonWhitespaceChar(tokenEnd) == '(') {
+                        RexxTokenTypes.FUNCTION_CALL
+                    } else {
+                        RexxTokenTypes.IDENTIFIER
+                    }
+                }
+
+                scanOperator(tokenStart) > tokenStart -> {
+                    val end = scanOperator(tokenStart)
+                    val operator = buffer.subSequence(tokenStart, end).toString()
+                    tokenEnd = end
+                    operatorType(operator)
+                }
+
+                current in PUNCTUATION -> {
+                    tokenEnd = tokenStart + 1
+                    RexxTokenTypes.PUNCTUATION
+                }
+
+                else -> {
+                    tokenEnd = tokenStart + 1
+                    TokenType.BAD_CHARACTER
                 }
             }
-            scanOperator(tokenStart) > tokenStart -> {
-                val end = scanOperator(tokenStart)
-                val operator = buffer.subSequence(tokenStart, end).toString()
-                tokenEnd = end
-                operatorType(operator)
-            }
-            current in PUNCTUATION -> {
-                tokenEnd = tokenStart + 1
-                RexxTokenTypes.PUNCTUATION
-            }
-            else -> {
-                tokenEnd = tokenStart + 1
-                TokenType.BAD_CHARACTER
-            }
-        }
     }
 
     private fun scanComment(offset: Int): Int {
@@ -106,18 +119,25 @@ open class RexxLexer : LexerBase() {
                     depth++
                     index += 2
                 }
+
                 charAt(index) == '*' && charAt(index + 1) == '/' -> {
                     depth--
                     index += 2
                 }
-                else -> index++
+
+                else -> {
+                    index++
+                }
             }
         }
 
         return index
     }
 
-    private fun scanString(offset: Int, quote: Char): Int {
+    private fun scanString(
+        offset: Int,
+        quote: Char,
+    ): Int {
         var index = offset + 1
 
         while (index < endOffset) {
@@ -181,7 +201,10 @@ open class RexxLexer : LexerBase() {
         return if (charAt(offset) in SINGLE_CHAR_OPERATORS) offset + 1 else offset
     }
 
-    private fun scanWhile(offset: Int, predicate: (Char) -> Boolean): Int {
+    private fun scanWhile(
+        offset: Int,
+        predicate: (Char) -> Boolean,
+    ): Int {
         var index = offset
         while (index < endOffset && predicate(buffer[index])) {
             index++
@@ -189,7 +212,10 @@ open class RexxLexer : LexerBase() {
         return index
     }
 
-    private fun matches(offset: Int, value: String): Boolean {
+    private fun matches(
+        offset: Int,
+        value: String,
+    ): Boolean {
         if (offset + value.length > endOffset) {
             return false
         }
@@ -206,19 +232,21 @@ open class RexxLexer : LexerBase() {
     private fun charAt(offset: Int): Char? = if (offset in startOffset until endOffset) buffer[offset] else null
 
     private fun isKeyword(value: String): Boolean = value.uppercase() in KEYWORDS
+
     private fun isBuiltinFunction(value: String): Boolean = value.uppercase() in BUILTIN_FUNCTIONS
 
     private fun isSymbolStart(value: Char): Boolean = value.isLetter() || value in SYMBOL_START
 
     private fun isSymbolPart(value: Char): Boolean = value.isLetterOrDigit() || value in SYMBOL_PART
 
-    private fun operatorType(operator: String): IElementType = when (operator) {
-        "=" -> RexxTokenTypes.ASSIGNMENT_OPERATOR
-        "==", "\\=", "¬=", "/=", "\\==", "¬==", "<>", "><", "<", ">", "<=", ">=" -> RexxTokenTypes.COMPARISON_OPERATOR
-        "&", "|", "||", "\\", "¬", "^" -> RexxTokenTypes.LOGICAL_OPERATOR
-        "+", "-", "*", "/", "%", "//", "**" -> RexxTokenTypes.ARITHMETIC_OPERATOR
-        else -> RexxTokenTypes.OPERATOR
-    }
+    private fun operatorType(operator: String): IElementType =
+        when (operator) {
+            "=" -> RexxTokenTypes.ASSIGNMENT_OPERATOR
+            "==", "\\=", "¬=", "/=", "\\==", "¬==", "<>", "><", "<", ">", "<=", ">=" -> RexxTokenTypes.COMPARISON_OPERATOR
+            "&", "|", "||", "\\", "¬", "^" -> RexxTokenTypes.LOGICAL_OPERATOR
+            "+", "-", "*", "/", "%", "//", "**" -> RexxTokenTypes.ARITHMETIC_OPERATOR
+            else -> RexxTokenTypes.OPERATOR
+        }
 
     private fun nextNonWhitespaceChar(offset: Int): Char? {
         var index = offset
@@ -229,89 +257,91 @@ open class RexxLexer : LexerBase() {
     }
 
     private companion object {
-        private val KEYWORDS = setOf(
-            "ADDRESS",
-            "ARG",
-            "BY",
-            "CALL",
-            "DO",
-            "DROP",
-            "ELSE",
-            "END",
-            "EXIT",
-            "EXPOSE",
-            "FOR",
-            "FOREVER",
-            "IF",
-            "INTERPRET",
-            "ITERATE",
-            "LEAVE",
-            "NOP",
-            "NUMERIC",
-            "OPTIONS",
-            "OTHERWISE",
-            "PARSE",
-            "PROCEDURE",
-            "PULL",
-            "PUSH",
-            "QUEUE",
-            "RETURN",
-            "SAY",
-            "SELECT",
-            "SIGNAL",
-            "THEN",
-            "TO",
-            "TRACE",
-            "UNTIL",
-            "UPPER",
-            "VALUE",
-            "VAR",
-            "WHEN",
-            "WHILE",
-            "WITH",
-        )
+        private val KEYWORDS =
+            setOf(
+                "ADDRESS",
+                "ARG",
+                "BY",
+                "CALL",
+                "DO",
+                "DROP",
+                "ELSE",
+                "END",
+                "EXIT",
+                "EXPOSE",
+                "FOR",
+                "FOREVER",
+                "IF",
+                "INTERPRET",
+                "ITERATE",
+                "LEAVE",
+                "NOP",
+                "NUMERIC",
+                "OPTIONS",
+                "OTHERWISE",
+                "PARSE",
+                "PROCEDURE",
+                "PULL",
+                "PUSH",
+                "QUEUE",
+                "RETURN",
+                "SAY",
+                "SELECT",
+                "SIGNAL",
+                "THEN",
+                "TO",
+                "TRACE",
+                "UNTIL",
+                "UPPER",
+                "VALUE",
+                "VAR",
+                "WHEN",
+                "WHILE",
+                "WITH",
+            )
         private val MULTI_CHAR_OPERATORS = listOf("\\==", "¬==", "**", "//", "||", "<>", "><", "<=", ">=", "\\=", "¬=", "/=", "==")
         private val PUNCTUATION = setOf('(', ')', ',', ';', ':', '.')
         private val SINGLE_CHAR_OPERATORS = setOf('+', '-', '*', '/', '%', '=', '<', '>', '&', '|', '\\', '¬', '^')
         private val SYMBOL_PART = setOf('.', '!', '?', '_', '@', '#', '$')
         private val SYMBOL_START = SYMBOL_PART - '.'
-        private val BUILTIN_FUNCTIONS = setOf(
-            "ABBREV",
-            "ABS",
-            "BITAND",
-            "BITOR",
-            "BITXOR",
-            "CENTER",
-            "CENTRE",
-            "CHANGESTR",
-            "COMPARE",
-            "COPIES",
-            "DATATYPE",
-            "DELSTR",
-            "DELWORD",
-            "FORMAT",
-            "INSERT",
-            "LASTPOS",
-            "LEFT",
-            "LENGTH",
-            "MAX",
-            "MIN",
-            "OVERLAY",
-            "POS",
-            "REVERSE",
-            "RIGHT",
-            "SIGN",
-            "SPACE",
-            "STRIP",
-            "SUBSTR",
-            "SUBWORD",
-            "TRANSLATE",
-            "VERIFY",
-            "WORD",
-            "WORDS",
-            "WORDINDEX",
-            "WORDLENGTH",
-            "WORDPOS",
-        )
+        private val BUILTIN_FUNCTIONS =
+            setOf(
+                "ABBREV",
+                "ABS",
+                "BITAND",
+                "BITOR",
+                "BITXOR",
+                "CENTER",
+                "CENTRE",
+                "CHANGESTR",
+                "COMPARE",
+                "COPIES",
+                "DATATYPE",
+                "DELSTR",
+                "DELWORD",
+                "FORMAT",
+                "INSERT",
+                "LASTPOS",
+                "LEFT",
+                "LENGTH",
+                "MAX",
+                "MIN",
+                "OVERLAY",
+                "POS",
+                "REVERSE",
+                "RIGHT",
+                "SIGN",
+                "SPACE",
+                "STRIP",
+                "SUBSTR",
+                "SUBWORD",
+                "TRANSLATE",
+                "VERIFY",
+                "WORD",
+                "WORDS",
+                "WORDINDEX",
+                "WORDLENGTH",
+                "WORDPOS",
+            )
     }
 }

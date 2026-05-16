@@ -11,15 +11,15 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.util.InvalidDataException
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Attribute
-import org.lang.rexx.RexxFileType
 import org.jdom.Element
+import org.lang.rexx.RexxFileType
 import java.nio.file.Files
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -52,24 +52,27 @@ internal fun validateRexxRunConfiguration(
         throw RuntimeConfigurationError("Script path must not be blank.")
     }
 
-    val script = try {
-        Path.of(scriptPath)
-    } catch (_: InvalidPathException) {
-        throw RuntimeConfigurationError("Script path is not a valid file path.")
-    }
+    val script =
+        try {
+            Path.of(scriptPath)
+        } catch (_: InvalidPathException) {
+            throw RuntimeConfigurationError("Script path is not a valid file path.")
+        }
 
     if (!Files.exists(script)) {
         throw RuntimeConfigurationError("Script file does not exist: $scriptPath")
     }
 }
 
-internal fun validateRexxRunConfiguration(interpreterPath: String, scriptPath: String) =
-    validateRexxRunConfiguration(
-        project = null,
-        interpreterPath = interpreterPath,
-        scriptPath = scriptPath,
-        useCurrentFile = false,
-    )
+internal fun validateRexxRunConfiguration(
+    interpreterPath: String,
+    scriptPath: String,
+) = validateRexxRunConfiguration(
+    project = null,
+    interpreterPath = interpreterPath,
+    scriptPath = scriptPath,
+    useCurrentFile = false,
+)
 
 internal fun resolveCurrentRexxFilePath(project: Project): String? {
     val selected = FileEditorManager.getInstance(project).selectedFiles.firstOrNull() ?: return null
@@ -87,11 +90,12 @@ internal fun detectSystemRexxInterpreters(pathEnv: String? = System.getenv("PATH
     val separator = java.io.File.pathSeparatorChar
     for (entry in pathEnv.split(separator)) {
         if (entry.isBlank()) continue
-        val dir = try {
-            Path.of(entry)
-        } catch (_: InvalidPathException) {
-            continue
-        }
+        val dir =
+            try {
+                Path.of(entry)
+            } catch (_: InvalidPathException) {
+                continue
+            }
         if (!Files.isDirectory(dir)) continue
 
         for (candidate in REXX_INTERPRETER_CANDIDATES) {
@@ -135,8 +139,10 @@ class RexxRunConfiguration(
         validateRexxRunConfiguration(project, interpreterPath, scriptPath, useCurrentFile)
     }
 
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): RexxCommandLineState =
-        RexxCommandLineState(environment, this)
+    override fun getState(
+        executor: Executor,
+        environment: ExecutionEnvironment,
+    ): RexxCommandLineState = RexxCommandLineState(environment, this)
 
     @Throws(InvalidDataException::class)
     override fun readExternal(element: Element) {
@@ -183,14 +189,16 @@ private class RexxRunConfigurationEditor : SettingsEditor<RexxRunConfiguration>(
 
     override fun createEditor(): JComponent = panel
 
-    private val panel: JPanel = FormBuilder.createFormBuilder()
-        .addLabeledComponent("Interpreter:", interpreterField)
-        .addComponent(runCurrentFileCheckbox)
-        .addLabeledComponent("Script:", scriptField)
-        .addLabeledComponent("Working directory:", workingDirectoryField)
-        .addLabeledComponent("Arguments:", argumentsField)
-        .addComponentFillVertically(JPanel(), 0)
-        .panel
+    private val panel: JPanel =
+        FormBuilder
+            .createFormBuilder()
+            .addLabeledComponent("Interpreter:", interpreterField)
+            .addComponent(runCurrentFileCheckbox)
+            .addLabeledComponent("Script:", scriptField)
+            .addLabeledComponent("Working directory:", workingDirectoryField)
+            .addLabeledComponent("Arguments:", argumentsField)
+            .addComponentFillVertically(JPanel(), 0)
+            .panel
 
     init {
         runCurrentFileCheckbox.addActionListener {
