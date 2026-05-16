@@ -1,84 +1,74 @@
 package org.lang.rexx
 
 import com.intellij.psi.TokenType
-import kotlin.test.Test
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlin.test.assertEquals
 
-class RexxSyntaxHighlighterTest {
-    private val highlighter = RexxSyntaxHighlighter()
+class RexxSyntaxHighlighterTest : BasePlatformTestCase() {
+    private lateinit var highlighter: RexxSyntaxHighlighter
 
-    @Test
-    fun mapsCommentToken() {
+    override fun setUp() {
+        super.setUp()
+        highlighter = RexxSyntaxHighlighter()
+    }
+
+    fun testMapsCommentToken() {
         assertEquals(RexxTextAttributes.COMMENT, keyFor(RexxTokenTypes.COMMENT))
     }
 
-    @Test
-    fun mapsKeywordToken() {
+    fun testMapsKeywordToken() {
         assertEquals(RexxTextAttributes.KEYWORD, keyFor(RexxTokenTypes.KEYWORD))
     }
 
-    @Test
-    fun mapsIdentifierToken() {
+    fun testMapsIdentifierToken() {
         assertEquals(RexxTextAttributes.VARIABLE, keyFor(RexxTokenTypes.IDENTIFIER))
     }
 
-    @Test
-    fun mapsFunctionCallToken() {
+    fun testMapsFunctionCallToken() {
         assertEquals(RexxTextAttributes.FUNCTION, keyFor(RexxTokenTypes.FUNCTION_CALL))
     }
 
-    @Test
-    fun mapsBuiltinFunctionToken() {
+    fun testMapsBuiltinFunctionToken() {
         assertEquals(RexxTextAttributes.BUILTIN_FUNCTION, keyFor(RexxTokenTypes.BUILTIN_FUNCTION))
     }
 
-    @Test
-    fun mapsLabelToken() {
+    fun testMapsLabelToken() {
         assertEquals(RexxTextAttributes.LABEL, keyFor(RexxTokenTypes.LABEL))
     }
 
-    @Test
-    fun mapsStringToken() {
+    fun testMapsStringToken() {
         assertEquals(RexxTextAttributes.STRING, keyFor(RexxTokenTypes.STRING))
     }
 
-    @Test
-    fun mapsNumberToken() {
+    fun testMapsNumberToken() {
         assertEquals(RexxTextAttributes.NUMBER, keyFor(RexxTokenTypes.NUMBER))
     }
 
-    @Test
-    fun mapsOperatorToken() {
+    fun testMapsOperatorToken() {
         assertEquals(RexxTextAttributes.OPERATOR, keyFor(RexxTokenTypes.OPERATOR))
     }
 
-    @Test
-    fun mapsAssignmentOperatorToken() {
+    fun testMapsAssignmentOperatorToken() {
         assertEquals(RexxTextAttributes.ASSIGNMENT_OPERATOR, keyFor(RexxTokenTypes.ASSIGNMENT_OPERATOR))
     }
 
-    @Test
-    fun mapsComparisonOperatorToken() {
+    fun testMapsComparisonOperatorToken() {
         assertEquals(RexxTextAttributes.COMPARISON_OPERATOR, keyFor(RexxTokenTypes.COMPARISON_OPERATOR))
     }
 
-    @Test
-    fun mapsLogicalOperatorToken() {
+    fun testMapsLogicalOperatorToken() {
         assertEquals(RexxTextAttributes.LOGICAL_OPERATOR, keyFor(RexxTokenTypes.LOGICAL_OPERATOR))
     }
 
-    @Test
-    fun mapsArithmeticOperatorToken() {
+    fun testMapsArithmeticOperatorToken() {
         assertEquals(RexxTextAttributes.ARITHMETIC_OPERATOR, keyFor(RexxTokenTypes.ARITHMETIC_OPERATOR))
     }
 
-    @Test
-    fun mapsPunctuationToken() {
+    fun testMapsPunctuationToken() {
         assertEquals(RexxTextAttributes.PUNCTUATION, keyFor(RexxTokenTypes.PUNCTUATION))
     }
 
-    @Test
-    fun mapsBadCharacterToken() {
+    fun testMapsBadCharacterToken() {
         assertEquals(RexxTextAttributes.BAD_CHARACTER, keyFor(TokenType.BAD_CHARACTER))
     }
 

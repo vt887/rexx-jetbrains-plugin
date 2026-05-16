@@ -1,12 +1,11 @@
 package org.lang.rexx
 
 import com.intellij.psi.tree.IElementType
-import kotlin.test.Test
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlin.test.assertEquals
 
-class RexxLexerTest {
-    @Test
-    fun tokenizesControlFlowCaseInsensitively() {
+class RexxLexerTest : BasePlatformTestCase() {
+    fun testTokenizesControlFlowCaseInsensitively() {
         val tokens = tokenTypes("do while wordin \\= ''\n  say wordin\nend")
 
         assertEquals(
@@ -24,8 +23,7 @@ class RexxLexerTest {
         )
     }
 
-    @Test
-    fun tokenizesNestedCommentsAndEscapedStrings() {
+    fun testTokenizesNestedCommentsAndEscapedStrings() {
         val tokens = tokenTypes("say 'it''s ok' /* outer /* inner */ done */")
 
         assertEquals(
@@ -38,8 +36,7 @@ class RexxLexerTest {
         )
     }
 
-    @Test
-    fun tokenizesNumbersAndCompoundSymbols() {
+    fun testTokenizesNumbersAndCompoundSymbols() {
         val tokens = tokenTypes("stem.1 = 42.5E+2")
 
         assertEquals(
@@ -52,8 +49,7 @@ class RexxLexerTest {
         )
     }
 
-    @Test
-    fun tokenizesParseTemplateDotAsPunctuation() {
+    fun testTokenizesParseTemplateDotAsPunctuation() {
         val tokens = tokenTypes("parse pull wordin .")
 
         assertEquals(
@@ -67,8 +63,7 @@ class RexxLexerTest {
         )
     }
 
-    @Test
-    fun keepsUnclosedStringAsStringToken() {
+    fun testKeepsUnclosedStringAsStringToken() {
         val tokens = tokenTypes("say 'unclosed")
 
         assertEquals(
@@ -80,8 +75,7 @@ class RexxLexerTest {
         )
     }
 
-    @Test
-    fun tokenizesFunctionBuiltinAndLabel() {
+    fun testTokenizesFunctionBuiltinAndLabel() {
         val tokens = tokenTypes("start: total = length(wordin) + customFn(x)")
         assertEquals(
             listOf(

@@ -49,13 +49,13 @@ jobs:
           restore-keys: intellij-sdk-
 
       - name: Build
-        run: ./gradlew clean build --no-daemon
+        run: make build
 
       - name: Verify plugin
-        run: ./gradlew verifyPlugin --no-daemon
+        run: make verify
 
       - name: Build plugin ZIP
-        run: ./gradlew buildPlugin --no-daemon
+        run: make package
 
       - name: Resolve artifact path
         id: artifact

@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "2.1.21"
     id("org.jetbrains.intellij.platform") version "2.16.0"
@@ -20,6 +22,7 @@ repositories {
 dependencies {
     intellijPlatform {
         create("IC", "2025.2")
+        testFramework(TestFrameworkType.Platform)
     }
     testImplementation(kotlin("test-junit"))
 }

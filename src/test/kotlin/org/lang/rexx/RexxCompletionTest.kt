@@ -1,14 +1,13 @@
 package org.lang.rexx
 
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import kotlin.test.Test
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class RexxCompletionTest {
-    @Test
-    fun exposesRequestedKeywordSet() {
+class RexxCompletionTest : BasePlatformTestCase() {
+    fun testExposesRequestedKeywordSet() {
         assertEquals(
             listOf(
                 "ADDRESS",
@@ -44,8 +43,7 @@ class RexxCompletionTest {
         )
     }
 
-    @Test
-    fun rendersImportantKeywordsWithBoldDescriptions() {
+    fun testRendersImportantKeywordsWithBoldDescriptions() {
         val presentation = LookupElementPresentation()
 
         rexxKeywordLookupElements().first { it.lookupString == "DO" }.renderElement(presentation)
@@ -55,8 +53,7 @@ class RexxCompletionTest {
         assertTrue(presentation.isItemTextBold)
     }
 
-    @Test
-    fun skipsCompletionInsideCommentsAndStrings() {
+    fun testSkipsCompletionInsideCommentsAndStrings() {
         assertFalse(isRexxKeywordCompletionAllowed(RexxLanguage, RexxTokenTypes.COMMENT))
         assertFalse(isRexxKeywordCompletionAllowed(RexxLanguage, RexxTokenTypes.STRING))
         assertTrue(isRexxKeywordCompletionAllowed(RexxLanguage, RexxTokenTypes.IDENTIFIER))
