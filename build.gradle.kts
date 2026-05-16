@@ -1,51 +1,61 @@
-import org.jetbrains.intellij.IntelliJPluginExtension
-import org.jetbrains.intellij.tasks.PatchPluginXmlTask
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.25"
-    id("org.jetbrains.intellij") version "1.17.4" apply false
+    id("org.jetbrains.kotlin.jvm") version "2.1.21"
+    id("org.jetbrains.intellij.platform") version "2.16.0"
 }
 
-group = "org.rexxlang.intellij"
+group = "org.lang.rexx"
 version = "0.1.0"
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 repositories {
     mavenCentral()
-}
-
-val isWrapperBootstrap = gradle.startParameter.taskNames.any { it == "wrapper" || it.endsWith(":wrapper") }
-
-if (!isWrapperBootstrap) {
-    apply(plugin = "org.jetbrains.intellij")
-
-    extensions.configure<IntelliJPluginExtension> {
-        version.set("2024.1")
-        type.set("IC")
-        updateSinceUntilBuild.set(false)
-    }
-
-    tasks.withType<PatchPluginXmlTask>().configureEach {
-        sinceBuild.set("241")
-        changeNotes.set(
-            """
-            <ul>
-                <li>Initial Rexx file type registration, lexer, and syntax highlighting.</li>
-            </ul>
-            """.trimIndent(),
-        )
+    intellijPlatform {
+        defaultRepositories()
     }
 }
 
 dependencies {
+    intellijPlatform {
+        create("IC", "2025.2")
+        testFramework(TestFrameworkType.Platform)
+    }
     testImplementation(kotlin("test-junit"))
+}
+
+intellijPlatform {
+    pluginConfiguration {
+        ideaVersion {
+            sinceBuild = "252"
+        }
+        changeNotes = """
+            <ul>
+                <li>Added Rexx keyword completion for core control-flow statements.</li>
+                <li>Added Rexx run configuration support for interpreter-based execution.</li>
+                <li>Added conservative formatter integration with a mandatory first-line comment rule.</li>
+            </ul>
+        """.trimIndent()
+    }
+
+    pluginVerification {
+        ides {
+            current()
+        }
+    }
 }
 
 tasks {
     test {
         useJUnit()
+    }
+
+    runIde {
+        // Suppress OpenTelemetry bootstrap failures in local sandbox runs.
+        jvmArgs("-Dotel.sdk.disabled=true")
+        environment("OTEL_SDK_DISABLED", "true")
     }
 }

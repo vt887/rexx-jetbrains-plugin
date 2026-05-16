@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "idea-rexx-plugin"
+rootProject.name = "rexx-jetbrains-plugin"

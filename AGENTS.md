@@ -387,6 +387,14 @@ Rules:
 
 # Commit Strategy
 
+**Commit Approval Rule (mandatory):**
+Before every `git commit`, the agent MUST:
+1. Show a summary of all staged changes (`git status` + brief description)
+2. Ask the user for explicit confirmation via `ask_user`
+3. Only proceed with commit + push after user approval
+
+This rule applies to ALL agents, ALL phases, NO exceptions.
+
 Preferred commit format:
 ```text
 type(scope): short description
@@ -409,10 +417,11 @@ Agents MUST NOT:
 - Add unnecessary frameworks
 - Implement PSI too early
 - Add unsafe shell execution
-- Commit generated IDE files
+- Commit generated IDE files (e.g. `.intellijPlatform/`, `.gradle/`, `build/`)
 - Create giant monolithic classes
 - Skip documentation
 - Skip tests
+- Commit or push without explicit user approval (see Commit Strategy)
 
 ---
 

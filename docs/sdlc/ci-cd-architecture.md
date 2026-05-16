@@ -17,7 +17,7 @@ Two workflows cover the full delivery lifecycle:
 push / PR
     │
     ▼
-[build]  →  compile + test (fail fast)
+[build]  →  lint + compile + test (fail fast)
     │
     ▼
 [verify] →  verifyPlugin (plugin.xml + archive structure)
@@ -28,11 +28,11 @@ push / PR
 
 ### Stage details
 
-| Stage | Gradle task(s) | Failure behaviour |
+| Stage | Command(s) | Failure behaviour |
 |---|---|---|
-| Build & Test | `clean build -x test`, `test` | Uploads test reports on failure |
-| Verify Plugin | `verifyPlugin` | Blocks package stage |
-| Package | `buildPlugin` | Uploads ZIP; errors if no ZIP found |
+| Build & Test | `make lint KTLINT=./ktlint`, `make build`, `make test` | Uploads test reports on failure |
+| Verify Plugin | `make verify` | Blocks package stage |
+| Package | `make package` | Uploads ZIP; errors if no ZIP found |
 
 ### Caching strategy
 
@@ -52,7 +52,7 @@ push / PR
 git tag v*  (or workflow_dispatch)
     │
     ▼
-build + test + verifyPlugin + buildPlugin
+lint + build + verifyPlugin + buildPlugin
     │
     ▼
 upload artifact (90-day retention)
@@ -63,6 +63,7 @@ create GitHub Release + attach ZIP
 
 - `cancel-in-progress: false` — releases are never cancelled mid-run.
 - `prerelease: true` is set automatically for tags containing `-` (e.g. `v0.2.0-beta`).
+- `ktlint` is downloaded to workspace (`./ktlint`), no `sudo` install required.
 
 ---
 
@@ -92,17 +93,21 @@ No secrets required for CI. Release uses the default `GITHUB_TOKEN`.
 ## How to Test Locally
 
 ```bash
-# Replicate CI build stage
-./gradlew clean build -x test --no-daemon
+# Replicate CI lint/build/test stages
+curl -sSLo ./ktlint https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint
+chmod +x ./ktlint
+make lint KTLINT=./ktlint
+make build
+make test
 
 # Replicate test stage
-./gradlew test --no-daemon
+make test
 
 # Replicate verify stage
-./gradlew verifyPlugin --no-daemon
+make verify
 
 # Replicate package stage
-./gradlew buildPlugin --no-daemon
+make package
 ls build/distributions/
 ```
 

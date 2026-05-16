@@ -1,8 +1,61 @@
+# Kotlin/Java/Gradle/IntelliJ ignores
 .gradle/
 build/
 out/
+.intellijPlatform/
 *.iml
 .idea/
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/shelf/
+# Gradle Wrapper — keep wrapper files, ignore only the generated .gradle cache
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
+# OS
+.DS_Store
+Thumbs.db
+# Logs
+*.log
+# Test results
+/test-results/
+/test-output/
+# Kotlin specific
+*.class
+*.jar
+*.war
+*.ear
+*.kotlin_module
+# IntelliJ
+.idea/
+*.iws
+*.ipr
+*.bak
+# Coverage
+*.exec
+*.ec
+coverage/
+# Local run configs
+.idea/runConfigurations/
+# User-specific
+*.swp
+*.swo
+# VSCode
+.vscode/
+# Mac system files
+.AppleDouble
+.LSOverride
+# JetBrains Rider
+.idea/.idea.Rider/
+.idea/.idea.WebStorm/
+.idea/.idea.PhpStorm/
+.idea/.idea.PyCharm/
+.idea/.idea.CLion/
+.idea/.idea.DataGrip/
+.idea/.idea.RubyMine/
+.idea/.idea.GoLand/
+.idea/.idea.AppCode/
+.idea/.idea.AndroidStudio/
+.idea/.idea.Fleet/
+# End of file
