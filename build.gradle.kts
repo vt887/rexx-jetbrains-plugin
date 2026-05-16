@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        create("IC", "2025.1")
+        create("IC", "2025.2")
     }
     testImplementation(kotlin("test-junit"))
 }
@@ -27,7 +27,7 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         ideaVersion {
-            sinceBuild = "251"
+            sinceBuild = "252"
         }
         changeNotes = """
             <ul>
