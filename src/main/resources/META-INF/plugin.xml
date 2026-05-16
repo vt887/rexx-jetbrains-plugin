@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>org.rexxlang.rexx</id>
+    <id>org.lang.rexx</id>
     <name>Rexx Language Support</name>
     <vendor email="tymoshv@example.com">tymoshv</vendor>
 
@@ -15,22 +15,28 @@
         <fileType
             name="Rexx"
             language="Rexx"
-            implementationClass="org.rexxlang.intellij.rexx.RexxFileType"
+            implementationClass="org.lang.rexx.RexxFileType"
             fieldName="INSTANCE"
             extensions="rexx;rex;rx"/>
         <lang.syntaxHighlighterFactory
             language="Rexx"
-            implementationClass="org.rexxlang.intellij.rexx.RexxSyntaxHighlighterFactory"/>
+            implementationClass="org.lang.rexx.RexxSyntaxHighlighterFactory"/>
+        <lang.parserDefinition
+            language="Rexx"
+            implementationClass="org.lang.rexx.RexxParserDefinition"/>
         <completion.contributor
             language="Rexx"
-            implementationClass="org.rexxlang.intellij.rexx.RexxCompletionContributor"/>
-        <configurationType implementation="org.rexxlang.intellij.rexx.run.RexxRunConfigurationType"/>
+            implementationClass="org.lang.rexx.RexxCompletionContributor"/>
+        <annotator
+            language="Rexx"
+            implementationClass="org.lang.rexx.RexxCommentTagAnnotator"/>
+        <configurationType implementation="org.lang.rexx.run.RexxRunConfigurationType"/>
         <lang.formatter
             language="Rexx"
-            implementationClass="org.rexxlang.intellij.rexx.format.RexxFormattingModelBuilder"/>
-        <preFormatProcessor implementation="org.rexxlang.intellij.rexx.format.RexxPreFormatProcessor"/>
-        <codeStyleSettingsProvider implementation="org.rexxlang.intellij.rexx.format.RexxCodeStyleSettingsProvider"/>
-        <langCodeStyleSettingsProvider implementation="org.rexxlang.intellij.rexx.format.RexxLanguageCodeStyleSettingsProvider"/>
-        <colorSettingsPage implementation="org.rexxlang.intellij.rexx.RexxColorSettingsPage"/>
+            implementationClass="org.lang.rexx.format.RexxFormattingModelBuilder"/>
+        <preFormatProcessor implementation="org.lang.rexx.format.RexxPreFormatProcessor"/>
+        <codeStyleSettingsProvider implementation="org.lang.rexx.format.RexxCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider implementation="org.lang.rexx.format.RexxLanguageCodeStyleSettingsProvider"/>
+        <colorSettingsPage implementation="org.lang.rexx.RexxColorSettingsPage"/>
     </extensions>
 </idea-plugin>

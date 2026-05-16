@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.16.0"
 }
 
-group = "org.rexxlang.intellij"
+group = "org.lang.rexx"
 version = "0.1.0"
 
 kotlin {
@@ -37,10 +37,22 @@ intellijPlatform {
             </ul>
         """.trimIndent()
     }
+
+    pluginVerification {
+        ides {
+            current()
+        }
+    }
 }
 
 tasks {
     test {
         useJUnit()
+    }
+
+    runIde {
+        // Suppress OpenTelemetry bootstrap failures in local sandbox runs.
+        jvmArgs("-Dotel.sdk.disabled=true")
+        environment("OTEL_SDK_DISABLED", "true")
     }
 }

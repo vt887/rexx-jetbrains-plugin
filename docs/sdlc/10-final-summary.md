@@ -2,24 +2,42 @@
 
 ## Status
 
-In progress. SDLC documentation baseline has been created and MVP implementation is being aligned with requirements.
+Phase 2 complete. Plugin is functional with syntax highlighting, keyword completion, run configuration, and basic formatter.
 
-## Implemented So Far
+## Implemented
 
-- Kotlin + Gradle Kotlin DSL scaffold.
-- IntelliJ plugin metadata and language module dependency.
-- Rexx language/file type/icon classes.
-- Handwritten lexer and syntax highlighter.
-- `RexxTokenSets`, `RexxTextAttributes`, and `RexxColorSettingsPage`.
-- File type registration constrained to `.rexx`, `.rex`, `.rx`.
-- Lexer and syntax-highlighter tests expanded.
-- Namespace refactor to `org.rexxlang.intellij.*`.
+### Phase 1 — MVP
+- Kotlin + Gradle Kotlin DSL scaffold (IntelliJ Platform Gradle Plugin 2.x).
+- IntelliJ plugin metadata, language module dependency (`com.intellij.modules.lang`).
+- `RexxLanguage`, `RexxFileType`, icon, Lexer, SyntaxHighlighter, ColorSettingsPage.
+- `RexxTokenSets`, `RexxTextAttributes`.
+- File type registration for `.rexx`, `.rex`, `.rx`.
+- Lexer and syntax-highlighter unit tests.
 
-## Pending For Current Iteration
+### Phase 2 — Editor & Execution Features
+- **Keyword Completion** (`RexxCompletionContributor`): 28 keywords, excludes comments/strings.
+- **Run Configuration** (`run/` package): RexxRunConfigurationType, Factory, Configuration, CommandLineState.
+  - Configurable interpreter, script path, working directory, arguments.
+  - Validates existence of interpreter and script before launch.
+- **Code Formatter** (`format/` package):
+  - `RexxFormattingModelBuilder`: activates Reformat Code menu item.
+  - `RexxPreFormatProcessor`: enforces first-line comment rule.
+  - `RexxCodeStyleSettingsProvider` + `RexxLanguageCodeStyleSettingsProvider`.
+- Build stack upgraded: Gradle 9.5.1, IC 2025.2, Kotlin 2.1.21, JBR 21.
+- Plugin ID renamed: `org.rexxlang.rexx`.
+- CI modernized: Node 24 actions, basic caching, latest Gradle.
+- 21 unit tests total.
 
-- Add Gradle wrapper and execute required validation commands.
-- Execute Gradle validation commands after wrapper is available.
+## Phase 3 Candidates
+
+- Grammar-Kit / JFlex parser → PSI tree
+- Structural formatter with indentation rules
+- Run configuration producer (right-click → Run)
+- Interpreter autodetection
+- PSI-aware completion with context ranking
+- Code folding, brace matching
+- Go-to-definition / find usages
 
 ## Blockers
 
-- `./gradlew` is missing from repository, so `clean build`, `test`, and `runIde` cannot be executed yet.
+None.
