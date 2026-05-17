@@ -1,0 +1,7 @@
+# Default ownership
+* @vt887
+
+# Security-sensitive areas
+.github/ @vt887
+SECURITY.md @vt887
+docs/security/ @vt887
