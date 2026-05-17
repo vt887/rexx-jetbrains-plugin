@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.21.3")
     intellijPlatform {
         create("IC", "2025.2")
         testFramework(TestFrameworkType.Platform)
