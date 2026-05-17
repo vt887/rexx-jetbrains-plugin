@@ -32,14 +32,21 @@ class RexxlintExternalAnnotator : ExternalAnnotator<RexxlintAnnotationInput, Rex
         holder: AnnotationHolder,
     ) {
         when (annotationResult) {
-            null -> Unit
-            is RexxlintCommandResult.Success -> annotationResult.value.forEach { diagnostic ->
-                val range = diagnostic.toTextRange(file.viewProvider.document ?: return@forEach)
-                val description = diagnostic.code?.let { "${diagnostic.message} [$it]" } ?: diagnostic.message
-                holder.newAnnotation(diagnostic.severity, description).range(range).create()
+            null -> {
+                Unit
             }
+
+            is RexxlintCommandResult.Success -> {
+                annotationResult.value.forEach { diagnostic ->
+                    val range = diagnostic.toTextRange(file.viewProvider.document ?: return@forEach)
+                    val description = diagnostic.code?.let { "${diagnostic.message} [$it]" } ?: diagnostic.message
+                    holder.newAnnotation(diagnostic.severity, description).range(range).create()
+                }
+            }
+
             is RexxlintCommandResult.Failure -> {
-                holder.newAnnotation(com.intellij.lang.annotation.HighlightSeverity.WARNING, annotationResult.message)
+                holder
+                    .newAnnotation(com.intellij.lang.annotation.HighlightSeverity.WARNING, annotationResult.message)
                     .fileLevel()
                     .create()
             }

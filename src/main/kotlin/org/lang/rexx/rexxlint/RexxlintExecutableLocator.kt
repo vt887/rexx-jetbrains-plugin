@@ -32,21 +32,29 @@ open class RexxlintExecutableLocator(
 
     private fun commonInstallLocations(): Sequence<Path> =
         when {
-            SystemInfoRt.isWindows -> sequenceOf(
-                Paths.get("C:/Program Files/rexxlint/rexxlint.exe"),
-                Paths.get("C:/Program Files (x86)/rexxlint/rexxlint.exe"),
-                Paths.get(System.getenv("LOCALAPPDATA") ?: "", "Programs", "rexxlint", "rexxlint.exe"),
-            )
-            SystemInfoRt.isMac -> sequenceOf(
-                Paths.get("/opt/homebrew/bin/rexxlint"),
-                Paths.get("/usr/local/bin/rexxlint"),
-                Paths.get("/usr/bin/rexxlint"),
-            )
-            else -> sequenceOf(
-                Paths.get("/usr/local/bin/rexxlint"),
-                Paths.get("/usr/bin/rexxlint"),
-                Paths.get("/snap/bin/rexxlint"),
-            )
+            SystemInfoRt.isWindows -> {
+                sequenceOf(
+                    Paths.get("C:/Program Files/rexxlint/rexxlint.exe"),
+                    Paths.get("C:/Program Files (x86)/rexxlint/rexxlint.exe"),
+                    Paths.get(System.getenv("LOCALAPPDATA") ?: "", "Programs", "rexxlint", "rexxlint.exe"),
+                )
+            }
+
+            SystemInfoRt.isMac -> {
+                sequenceOf(
+                    Paths.get("/opt/homebrew/bin/rexxlint"),
+                    Paths.get("/usr/local/bin/rexxlint"),
+                    Paths.get("/usr/bin/rexxlint"),
+                )
+            }
+
+            else -> {
+                sequenceOf(
+                    Paths.get("/usr/local/bin/rexxlint"),
+                    Paths.get("/usr/bin/rexxlint"),
+                    Paths.get("/snap/bin/rexxlint"),
+                )
+            }
         }
 
     private fun executableName(): String = if (SystemInfoRt.isWindows) "rexxlint.exe" else "rexxlint"

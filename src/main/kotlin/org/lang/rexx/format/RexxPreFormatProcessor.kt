@@ -1,10 +1,10 @@
 package org.lang.rexx.format
 
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.source.codeStyle.PreFormatProcessor
-import com.intellij.lang.ASTNode
 import org.lang.rexx.RexxLanguage
 import org.lang.rexx.rexxlint.RexxlintBridgeService
 import org.lang.rexx.rexxlint.RexxlintNotifier
@@ -35,6 +35,7 @@ class RexxPreFormatProcessor : PreFormatProcessor {
                     TextRange(0, result.value.length)
                 }
             }
+
             is org.lang.rexx.rexxlint.RexxlintCommandResult.Failure -> {
                 RexxlintNotifier.notifyFormattingFailure(file.project, result.message)
                 range

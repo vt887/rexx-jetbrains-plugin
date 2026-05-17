@@ -20,12 +20,13 @@ class RexxlintJsonParser(
         }
 
     private fun extractDiagnostics(root: JsonNode): List<RexxlintDiagnostic> {
-        val nodes = when {
-            root.isArray -> root.toList()
-            root.has("diagnostics") && root.get("diagnostics").isArray -> root.get("diagnostics").toList()
-            root.has("issues") && root.get("issues").isArray -> root.get("issues").toList()
-            else -> emptyList()
-        }
+        val nodes =
+            when {
+                root.isArray -> root.toList()
+                root.has("diagnostics") && root.get("diagnostics").isArray -> root.get("diagnostics").toList()
+                root.has("issues") && root.get("issues").isArray -> root.get("issues").toList()
+                else -> emptyList()
+            }
         return nodes.mapNotNull(::toDiagnostic)
     }
 

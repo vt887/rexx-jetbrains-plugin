@@ -11,7 +11,9 @@ enum class RexxlintFailureCode {
 }
 
 sealed interface RexxlintCommandResult<out T> {
-    data class Success<T>(val value: T) : RexxlintCommandResult<T>
+    data class Success<T>(
+        val value: T,
+    ) : RexxlintCommandResult<T>
 
     data class Failure(
         val code: RexxlintFailureCode,

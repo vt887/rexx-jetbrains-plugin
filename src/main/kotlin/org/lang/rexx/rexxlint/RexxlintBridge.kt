@@ -35,11 +35,12 @@ class RexxlintBridge(
         source: String,
         filePath: String?,
     ): RexxlintCommandResult<String> {
-        val executable = executableLocator.findExecutable(settingsProvider())
-            ?: return RexxlintCommandResult.Failure(
-                code = RexxlintFailureCode.EXECUTABLE_NOT_FOUND,
-                message = "rexxlint executable was not found. Configure it in Settings | Tools | Rexx Lint or install it on PATH.",
-            )
+        val executable =
+            executableLocator.findExecutable(settingsProvider())
+                ?: return RexxlintCommandResult.Failure(
+                    code = RexxlintFailureCode.EXECUTABLE_NOT_FOUND,
+                    message = "rexxlint executable was not found. Configure it in Settings | Tools | Rexx Lint or install it on PATH.",
+                )
 
         val commandLine = buildCommandLine(executable, arguments, filePath)
         val execution = processExecutor.execute(commandLine, source, timeout)
