@@ -30,6 +30,14 @@
         <annotator
             language="Rexx"
             implementationClass="org.lang.rexx.RexxCommentTagAnnotator"/>
+        <externalAnnotator
+            language="Rexx"
+            implementationClass="org.lang.rexx.rexxlint.RexxlintExternalAnnotator"/>
+        <applicationConfigurable
+            parentId="tools"
+            displayName="Rexx Lint"
+            id="settings.rexxlint"
+            instance="org.lang.rexx.rexxlint.RexxlintConfigurable"/>
         <configurationType implementation="org.lang.rexx.run.RexxRunConfigurationType"/>
         <lang.formatter
             language="Rexx"

@@ -33,6 +33,7 @@ Primary stack:
 8. Use minimal abstractions.
 9. Documentation is mandatory.
 10. Never overwrite existing files without review.
+11. After every code change, run `make lint`, `make build`, and `make test`.
 
 ---
 
@@ -148,8 +149,9 @@ Responsibilities:
 
 Required commands:
 ```bash
-./gradlew clean build
-./gradlew test
+make lint
+make build
+make test
 ./gradlew runIde
 ```
 
@@ -313,8 +315,9 @@ Rules:
 
 Required commands:
 ```bash
-./gradlew clean build
-./gradlew test
+make lint
+make build
+make test
 ./gradlew runIde
 ```
 

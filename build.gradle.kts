@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.0")
     intellijPlatform {
         create("IC", "2025.2")
         testFramework(TestFrameworkType.Platform)
@@ -36,7 +37,7 @@ intellijPlatform {
             <ul>
                 <li>Added Rexx keyword completion for core control-flow statements.</li>
                 <li>Added Rexx run configuration support for interpreter-based execution.</li>
-                <li>Added conservative formatter integration with a mandatory first-line comment rule.</li>
+                <li>Delegated Rexx linting and formatting to rexxlint via an external process bridge.</li>
             </ul>
         """.trimIndent()
     }
